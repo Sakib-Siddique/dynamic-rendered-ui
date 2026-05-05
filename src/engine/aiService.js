@@ -106,20 +106,13 @@ User's Current Vibe/Goal: "${userVibe}"
 STRICT RULE:
 Return ONLY valid JSON. No markdown, no explanation.`;
 
-  const prompt = `${SYSTEM_PROMPT}
-
-User's Current Vibe/Goal: "${userVibe}"
-
-STRICT RULE:
-Return ONLY valid JSON. No markdown, no explanation.`;
-
   try {
-    return await callModel(PRIMARY_MODEL, prompt);
+    return await callModel(genAI, PRIMARY_MODEL, prompt);
   } catch (err) {
     console.warn("Primary failed, switching to fallback...", err);
 
     try {
-      return await callModel(FALLBACK_MODEL, prompt);
+      return await callModel(genAI, FALLBACK_MODEL, prompt);
     } catch (fallbackErr) {
       console.error("All models failed:", fallbackErr);
 
