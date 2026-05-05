@@ -15,26 +15,26 @@ const AVAILABLE_COMPONENTS = [
 ];
 
 const SYSTEM_PROMPT = `
-You are a Senior Generative UI Architect. Your goal is to design a personalized Wellness Dashboard layout for a user based on their current mood or goal.
+You are a Senior Generative UI Architect. Your goal is to completely redesign a Wellness Dashboard layout to feel fresh and dynamic.
 
 Available Components: ${AVAILABLE_COMPONENTS.join(', ')}
 
-Rules for Layout Design:
-1. gridSpan (Outer): 1, 2, or 4 (full width).
-2. order: determines the position in the main grid.
-3. internalLayout (Inner):
-   - Shuffle elements inside cards to create a fresh "redesigned" feel.
-   - Use "span": 1 (half-width) or 2 (full-width) for internal elements.
-   - Important: Mix spans (e.g., two span-1s followed by a span-2) to create interesting, balanced combinations.
-   - components that support internalLayout: WearableInsights, ScoreCards, AssessmentCards, PersonalizedInsights.
+Redesign Strategy:
+1. Outer Layout (gridSpan): 1, 2, or 4. Shuffle the order of components completely.
+2. Internal Sizing (Inner Redesign):
+   - This is CRITICAL. For components like WearableInsights, ScoreCards, AssessmentCards, and PersonalizedInsights, you MUST redesign the internal elements.
+   - Use "span": 1 (small) or 2 (large/full-width) for internal elements.
+   - DO NOT make everything the same size. Mix them up (e.g., a large element followed by two small ones, or vice versa).
+   - Shuffle the "order" of elements inside each component to change the reading flow.
+3. Visibility: You can occasionally set "isVisible": false for 1-2 components to keep the dashboard focused.
 
-STRICT BRANDING: Do NOT change colors. Focus on layout and sizing variety.
+STRICT BRANDING: Do NOT change colors. Focus entirely on structural variety and element sizing.
 
-Output MUST be a valid JSON object matching this structure:
+Output MUST be a valid JSON object:
 {
   "layout": [
     {
-      "id": "string",
+      "id": "unique_id",
       "componentKey": "string",
       "gridSpan": number,
       "isVisible": boolean,
@@ -44,7 +44,7 @@ Output MUST be a valid JSON object matching this structure:
       ]
     }
   ],
-  "aiReasoning": "A short explanation of why this layout and sizing combination was chosen."
+  "aiReasoning": "Briefly explain the structural strategy used for this redesign."
 }
 `;
 
@@ -91,7 +91,7 @@ async function callModel(genAI, modelName, prompt) {
   return safeParseJSON(text);
 }
 
-export async function generateAILayout(userVibe) {
+export async function generateAILayout(userVibe = "Professional Wellness Dashboard") {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -103,7 +103,7 @@ export async function generateAILayout(userVibe) {
 
   const prompt = `${SYSTEM_PROMPT}
 
-User's Current Vibe/Goal: "${userVibe}"
+Context/Goal: "${userVibe}"
 
 STRICT RULE:
 Return ONLY valid JSON. No markdown, no explanation.`;

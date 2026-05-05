@@ -1130,43 +1130,39 @@ input:checked + .slider:before { transform: translateX(20px); }
 .ai-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 4px 12px;
-  width: 100%;
-  max-width: 450px;
   transition: all 0.3s ease;
 }
 
-.ai-input-wrapper:focus-within {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-}
-
-.ai-vibe-minimal {
+.ai-redesign-btn {
+  background: linear-gradient(135deg, #00796b 0%, #004d40 100%);
+  color: white;
   border: none;
-  background: transparent;
-  font-size: 0.9rem;
-  color: #1e293b;
-  width: 100%;
-  outline: none;
-}
-
-.ai-refresh-btn {
-  background: transparent;
-  border: none;
-  color: #64748b;
-  font-size: 1.2rem;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.4s ease;
-  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 121, 107, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ai-refresh-btn:hover {
-  color: #8b5cf6;
-  transform: rotate(180deg);
+.ai-redesign-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 121, 107, 0.3);
+  filter: brightness(1.1);
+}
+
+.ai-redesign-btn:active {
+  transform: translateY(0);
+}
+
+.ai-redesign-btn:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .ai-toggle-compact {
