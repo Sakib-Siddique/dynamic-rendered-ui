@@ -15,18 +15,23 @@ const AVAILABLE_COMPONENTS = [
 ];
 
 const SYSTEM_PROMPT = `
-You are a Senior Generative UI Architect. Your goal is to design a personalized Wellness Dashboard layout for a user based on their current mood or goal.
+You are a Senior Generative UI Architect. Your goal is to design a personalized Wellness Dashboard layout.
 
 Available Components: ${AVAILABLE_COMPONENTS.join(', ')}
 
-Rules for Layout Design:
-1. gridSpan can be 1, 2, or 4 (full width).
-2. order determines the position in the grid.
-3. isVisible can be true or false.
-4. internalLayout shuffles elements inside cards:
-   - WearableInsights: 'Header', 'DeviceInfo', 'StepsTracker', 'VitalsRow', 'AITip'
+Design Variants (apply to "designVariant" field):
+- "default": Standard clean look.
+- "glass": Glassmorphism with blur.
+- "dark": Sleek dark mode card.
+- "gradient-border": Colorful gradient border.
+- "neon": Subtle glow effect.
+- "minimal": Bare-bones flat design.
 
-   - ScoreCards: 'ScoreTeal', 'ScoreBlue', 'ScoreCoral'
+Rules:
+1. gridSpan can be 1, 2, or 4.
+2. order determines position.
+3. internalLayout shuffles elements AND assigns variants to them.
+4. Each component AND each internal element can have its own "designVariant".
 
 Output MUST be a valid JSON object matching this structure:
 {
@@ -37,12 +42,18 @@ Output MUST be a valid JSON object matching this structure:
       "gridSpan": number,
       "isVisible": boolean,
       "order": number,
+      "designVariant": "string", 
       "internalLayout": [
-        { "elementKey": "string", "isVisible": boolean, "order": number }
+        { 
+          "elementKey": "string", 
+          "isVisible": boolean, 
+          "order": number,
+          "designVariant": "string" 
+        }
       ]
     }
   ],
-  "aiReasoning": "A short explanation of why this layout was chosen for the user's vibe."
+  "aiReasoning": "Why this specific design and layout fits the user's vibe."
 }
 `;
 
@@ -106,20 +117,13 @@ User's Current Vibe/Goal: "${userVibe}"
 STRICT RULE:
 Return ONLY valid JSON. No markdown, no explanation.`;
 
-  const prompt = `${SYSTEM_PROMPT}
-
-User's Current Vibe/Goal: "${userVibe}"
-
-STRICT RULE:
-Return ONLY valid JSON. No markdown, no explanation.`;
-
   try {
-    return await callModel(PRIMARY_MODEL, prompt);
+    return await callModel(genAI, PRIMARY_MODEL, prompt);
   } catch (err) {
     console.warn("Primary failed, switching to fallback...", err);
 
     try {
-      return await callModel(FALLBACK_MODEL, prompt);
+      return await callModel(genAI, FALLBACK_MODEL, prompt);
     } catch (fallbackErr) {
       console.error("All models failed:", fallbackErr);
 

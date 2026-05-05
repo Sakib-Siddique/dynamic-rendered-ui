@@ -38,6 +38,8 @@ function randomPick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const VARIANTS = ['default', 'glass', 'dark', 'gradient-border', 'neon', 'minimal'];
+
 export function generateUniqueLayout() {
   const shuffled = shuffle(COMPONENT_KEYS);
 
@@ -56,8 +58,9 @@ export function generateUniqueLayout() {
         internalLayout = shuffle(INTERNAL_ELEMENTS[key]).map((elKey, i) => ({
             id: `${key}-internal-${elKey}-${i}`,
             elementKey: elKey,
-            isVisible: Math.random() > 0.1, // 90% visibility for elements
-            order: i
+            isVisible: Math.random() > 0.1, // 90% visibility
+            order: i,
+            designVariant: randomPick(VARIANTS)
         }));
     }
 
@@ -67,7 +70,8 @@ export function generateUniqueLayout() {
       gridSpan,
       isVisible: true,
       order: index,
-      internalLayout // The nested DNA
+      designVariant: randomPick(VARIANTS),
+      internalLayout 
     };
   });
 

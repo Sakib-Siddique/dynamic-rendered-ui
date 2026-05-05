@@ -58,8 +58,11 @@ export default function DynamicCanvas({ layoutConfig }) {
                 },
               }}
             >
-              {/* Pass the internal layout down for recursive shuffling */}
-              <Component internalLayout={item.internalLayout} />
+              {/* Pass the internal layout and design variant down */}
+              <Component 
+                internalLayout={item.internalLayout} 
+                designVariant={item.designVariant} 
+              />
             </motion.div>
           );
         })}

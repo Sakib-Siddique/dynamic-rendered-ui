@@ -61,7 +61,7 @@ export default function App() {
   }, []);
 
   const triggerRefresh = () => {
-    window.location.reload();
+    handleReArchitect();
   };
 
   return (
