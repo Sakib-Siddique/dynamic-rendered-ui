@@ -2,8 +2,8 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Elements = {
-  PHQ2: ({ variant }) => (
-    <div className={`assessment-card coral variant-${variant}`}>
+  PHQ2: () => (
+    <div className="assessment-card coral">
       <div className="assessment-icon coral-bg">📋</div>
       <div className="assessment-text">
         <h4>PHQ 2</h4>
@@ -11,8 +11,8 @@ const Elements = {
       </div>
     </div>
   ),
-  GAD2: ({ variant }) => (
-    <div className={`assessment-card orange variant-${variant}`}>
+  GAD2: () => (
+    <div className="assessment-card orange">
       <div className="assessment-icon orange-bg">📊</div>
       <div className="assessment-text">
         <h4>GAD2</h4>
@@ -20,8 +20,8 @@ const Elements = {
       </div>
     </div>
   ),
-  DASS21: ({ variant }) => (
-    <div className={`assessment-card green variant-${variant}`}>
+  DASS21: () => (
+    <div className="assessment-card green">
       <div className="assessment-icon green-bg">🩺</div>
       <div className="assessment-text">
         <h4>DASS-21</h4>
@@ -31,15 +31,15 @@ const Elements = {
   )
 };
 
-export default function AssessmentCards({ internalLayout, designVariant }) {
+export default function AssessmentCards({ internalLayout }) {
   const layout = internalLayout || [
-    { elementKey: 'PHQ2', isVisible: true, designVariant: 'default' },
-    { elementKey: 'GAD2', isVisible: true, designVariant: 'default' },
-    { elementKey: 'DASS21', isVisible: true, designVariant: 'default' },
+    { elementKey: 'PHQ2', isVisible: true },
+    { elementKey: 'GAD2', isVisible: true },
+    { elementKey: 'DASS21', isVisible: true },
   ];
 
   return (
-    <div className={`assessment-row variant-${designVariant}`}>
+    <div className="assessment-row">
       <AnimatePresence>
         {layout.filter(el => el.isVisible).map((el) => {
           const Component = Elements[el.elementKey];
@@ -58,7 +58,7 @@ export default function AssessmentCards({ internalLayout, designVariant }) {
               }}
               style={{ width: '100%' }}
             >
-              <Component variant={el.designVariant || designVariant} />
+              <Component />
             </motion.div>
           ) : null;
         })}

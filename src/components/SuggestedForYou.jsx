@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function SuggestedForYou({ designVariant }) {
+export default function SuggestedForYou() {
   return (
-    <div className={`suggested-banner variant-${designVariant}`}>
+    <div className="suggested-banner">
       <div className="suggested-icon">💡</div>
       <div className="suggested-text">
         <h3>Suggested for you</h3>

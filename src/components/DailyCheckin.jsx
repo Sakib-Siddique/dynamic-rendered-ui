@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function DailyCheckin({ designVariant }) {
+export default function DailyCheckin() {
   return (
-    <div className={`checkin-banner variant-${designVariant}`}>
+    <div className="checkin-banner">
       <div className="checkin-icon">＋</div>
       <div className="checkin-text">
         <h2>Daily Check-in reminder</h2>

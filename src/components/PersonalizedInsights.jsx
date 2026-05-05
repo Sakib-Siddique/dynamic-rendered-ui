@@ -8,42 +8,42 @@ const insights = [
 ];
 
 const Elements = {
-  Header: ({ variant }) => (
-    <div className={`insights-header variant-${variant}`}>
+  Header: () => (
+    <div className="insights-header">
       <span className="insights-dot" />
       <h3>Personalized Insights</h3>
     </div>
   ),
-  Insight1: ({ variant }) => (
-    <div className={`insight-item variant-${variant}`}>
+  Insight1: () => (
+    <div className="insight-item">
       <div className="insight-check gray">○</div>
       <div className="insight-text">Your metrics look balanced today! Keep up the great work.</div>
     </div>
   ),
-  Insight2: ({ variant }) => (
-    <div className={`insight-item variant-${variant}`}>
+  Insight2: () => (
+    <div className="insight-item">
       <div className="insight-check gray">○</div>
       <div className="insight-text">Hydration check! Have you had a glass of water recently?</div>
     </div>
   ),
-  Insight3: ({ variant }) => (
-    <div className={`insight-item variant-${variant}`}>
+  Insight3: () => (
+    <div className="insight-item">
       <div className="insight-check green">✓</div>
       <div className="insight-text">Gratitude practice: Think of one small thing you are thankful for today.</div>
     </div>
   )
 };
 
-export default function PersonalizedInsights({ internalLayout, designVariant }) {
+export default function PersonalizedInsights({ internalLayout }) {
   const layout = internalLayout || [
-    { elementKey: 'Header', isVisible: true, designVariant: 'default' },
-    { elementKey: 'Insight1', isVisible: true, designVariant: 'default' },
-    { elementKey: 'Insight2', isVisible: true, designVariant: 'default' },
-    { elementKey: 'Insight3', isVisible: true, designVariant: 'default' },
+    { elementKey: 'Header', isVisible: true },
+    { elementKey: 'Insight1', isVisible: true },
+    { elementKey: 'Insight2', isVisible: true },
+    { elementKey: 'Insight3', isVisible: true },
   ];
 
   return (
-    <div className={`insights-card variant-${designVariant}`}>
+    <div className="insights-card">
       <AnimatePresence>
         {layout.filter(el => el.isVisible).map((el) => {
           const Component = Elements[el.elementKey];
@@ -57,7 +57,7 @@ export default function PersonalizedInsights({ internalLayout, designVariant }) 
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               style={{ marginBottom: '16px' }}
             >
-              <Component variant={el.designVariant || designVariant} />
+              <Component />
             </motion.div>
           ) : null;
         })}
