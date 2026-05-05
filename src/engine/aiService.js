@@ -1,8 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({
-  apiKey: import.meta.env.VITE_GEMINI_API_KEY,
-});
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const PRIMARY_MODEL = "gemini-2.0-flash";
 const FALLBACK_MODEL = "gemini-2.0-flash-lite";
@@ -54,8 +50,8 @@ Output MUST be a valid JSON object matching this structure:
  * Extract text safely from response
  */
 function extractText(response) {
-  if (response.text) return response.text();
-
+  if (typeof response.text === 'function') return response.text();
+  
   const candidate = response.candidates?.[0];
   const part = candidate?.content?.parts?.[0];
 
@@ -84,21 +80,31 @@ function safeParseJSON(text) {
   }
 }
 
-async function callModel(model, prompt) {
-  const response = await ai.models.generateContent({
-    model,
-    contents: prompt,
-  });
-
+async function callModel(genAI, modelName, prompt) {
+  const model = genAI.getGenerativeModel({ model: modelName });
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
   const text = extractText(response);
 
   return safeParseJSON(text);
 }
 
 export async function generateAILayout(userVibe) {
-  if (!import.meta.env.VITE_GEMINI_API_KEY) {
-    throw new Error("Missing VITE_GEMINI_API_KEY in .env file");
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (!apiKey) {
+    console.error("Vercel/Local Error: VITE_GEMINI_API_KEY is missing.");
+    throw new Error("API Key not found. Please set VITE_GEMINI_API_KEY in Vercel settings.");
   }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  const prompt = `${SYSTEM_PROMPT}
+
+User's Current Vibe/Goal: "${userVibe}"
+
+STRICT RULE:
+Return ONLY valid JSON. No markdown, no explanation.`;
 
   const prompt = `${SYSTEM_PROMPT}
 
