@@ -36,26 +36,31 @@ const Elements = {
 
 export default function PersonalizedInsights({ internalLayout }) {
   const layout = internalLayout || [
-    { elementKey: 'Header', isVisible: true },
-    { elementKey: 'Insight1', isVisible: true },
-    { elementKey: 'Insight2', isVisible: true },
-    { elementKey: 'Insight3', isVisible: true },
+    { elementKey: 'Header', isVisible: true, span: 2 },
+    { elementKey: 'Insight1', isVisible: true, span: 1 },
+    { elementKey: 'Insight2', isVisible: true, span: 1 },
+    { elementKey: 'Insight3', isVisible: true, span: 2 },
   ];
 
   return (
-    <div className="insights-card">
-      <AnimatePresence>
+    <div className="insights-card" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      <AnimatePresence mode="popLayout">
         {layout.filter(el => el.isVisible).map((el) => {
           const Component = Elements[el.elementKey];
+          const span = el.span || 1;
+          
           return Component ? (
             <motion.div 
               key={el.elementKey} 
               layout 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              style={{ marginBottom: '16px' }}
+              style={{ 
+                gridColumn: `span ${span}`,
+                marginBottom: '0px'
+              }}
             >
               <Component />
             </motion.div>

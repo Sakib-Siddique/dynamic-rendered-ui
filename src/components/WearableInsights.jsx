@@ -48,27 +48,32 @@ const Elements = {
 export default function WearableInsights({ internalLayout }) {
   // If no internal layout provided, use default order
   const layout = internalLayout || [
-    { elementKey: 'Header', isVisible: true },
-    { elementKey: 'DeviceInfo', isVisible: true },
-    { elementKey: 'StepsTracker', isVisible: true },
-    { elementKey: 'VitalsRow', isVisible: true },
-    { elementKey: 'AITip', isVisible: true },
+    { elementKey: 'Header', isVisible: true, span: 2 },
+    { elementKey: 'DeviceInfo', isVisible: true, span: 1 },
+    { elementKey: 'StepsTracker', isVisible: true, span: 1 },
+    { elementKey: 'VitalsRow', isVisible: true, span: 2 },
+    { elementKey: 'AITip', isVisible: true, span: 2 },
   ];
 
   return (
-    <div className="wearable-section">
-      <AnimatePresence>
+    <div className="wearable-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <AnimatePresence mode="popLayout">
         {layout.filter(el => el.isVisible).map((el) => {
           const Component = Elements[el.elementKey];
+          const span = el.span || 1;
+          
           return Component ? (
             <motion.div 
               key={el.elementKey} 
               layout 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              style={{ marginBottom: '20px' }}
+              style={{ 
+                gridColumn: `span ${span}`,
+                marginBottom: '0px' // Managed by grid gap
+              }}
             >
               <Component />
             </motion.div>

@@ -53,12 +53,24 @@ export function generateUniqueLayout() {
     // Generate INTERNAL layout for components that support it
     let internalLayout = null;
     if (INTERNAL_ELEMENTS[key]) {
-        internalLayout = shuffle(INTERNAL_ELEMENTS[key]).map((elKey, i) => ({
-            id: `${key}-internal-${elKey}-${i}`,
-            elementKey: elKey,
-            isVisible: Math.random() > 0.1, // 90% visibility for elements
-            order: i
-        }));
+        internalLayout = shuffle(INTERNAL_ELEMENTS[key]).map((elKey, i) => {
+            // Randomly assign a span for sizing variety
+            let span = 1;
+            if (key === 'ScoreCards') {
+                span = Math.random() > 0.7 ? 2 : 1; // Sometimes a card is bigger
+            } else {
+                // For 2-column grids
+                span = (elKey === 'Header' || Math.random() > 0.6) ? 2 : 1; 
+            }
+            
+            return {
+                id: `${key}-internal-${elKey}-${i}`,
+                elementKey: elKey,
+                isVisible: Math.random() > 0.1, // 90% visibility for elements
+                order: i,
+                span // Sizing property
+            };
+        });
     }
 
     return {

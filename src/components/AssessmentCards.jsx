@@ -33,30 +33,32 @@ const Elements = {
 
 export default function AssessmentCards({ internalLayout }) {
   const layout = internalLayout || [
-    { elementKey: 'PHQ2', isVisible: true },
-    { elementKey: 'GAD2', isVisible: true },
-    { elementKey: 'DASS21', isVisible: true },
+    { elementKey: 'PHQ2', isVisible: true, span: 1 },
+    { elementKey: 'GAD2', isVisible: true, span: 1 },
+    { elementKey: 'DASS21', isVisible: true, span: 2 },
   ];
 
   return (
-    <div className="assessment-row">
-      <AnimatePresence>
+    <div className="assessment-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <AnimatePresence mode="popLayout">
         {layout.filter(el => el.isVisible).map((el) => {
           const Component = Elements[el.elementKey];
+          const span = el.span || 1;
+
           return Component ? (
             <motion.div 
               key={el.elementKey} 
               layout 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
               transition={{ 
                 type: 'spring', 
                 stiffness: 300, 
                 damping: 30,
                 layout: { duration: 0.3 }
               }}
-              style={{ width: '100%' }}
+              style={{ gridColumn: `span ${span}` }}
             >
               <Component />
             </motion.div>

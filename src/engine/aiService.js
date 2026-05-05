@@ -20,13 +20,15 @@ You are a Senior Generative UI Architect. Your goal is to design a personalized 
 Available Components: ${AVAILABLE_COMPONENTS.join(', ')}
 
 Rules for Layout Design:
-1. gridSpan can be 1, 2, or 4 (full width).
-2. order determines the position in the grid.
-3. isVisible can be true or false.
-4. internalLayout shuffles elements inside cards:
-   - WearableInsights: 'Header', 'DeviceInfo', 'StepsTracker', 'VitalsRow', 'AITip'
+1. gridSpan (Outer): 1, 2, or 4 (full width).
+2. order: determines the position in the main grid.
+3. internalLayout (Inner):
+   - Shuffle elements inside cards to create a fresh "redesigned" feel.
+   - Use "span": 1 (half-width) or 2 (full-width) for internal elements.
+   - Important: Mix spans (e.g., two span-1s followed by a span-2) to create interesting, balanced combinations.
+   - components that support internalLayout: WearableInsights, ScoreCards, AssessmentCards, PersonalizedInsights.
 
-   - ScoreCards: 'ScoreTeal', 'ScoreBlue', 'ScoreCoral'
+STRICT BRANDING: Do NOT change colors. Focus on layout and sizing variety.
 
 Output MUST be a valid JSON object matching this structure:
 {
@@ -38,11 +40,11 @@ Output MUST be a valid JSON object matching this structure:
       "isVisible": boolean,
       "order": number,
       "internalLayout": [
-        { "elementKey": "string", "isVisible": boolean, "order": number }
+        { "elementKey": "string", "isVisible": boolean, "order": number, "span": number }
       ]
     }
   ],
-  "aiReasoning": "A short explanation of why this layout was chosen for the user's vibe."
+  "aiReasoning": "A short explanation of why this layout and sizing combination was chosen."
 }
 `;
 
