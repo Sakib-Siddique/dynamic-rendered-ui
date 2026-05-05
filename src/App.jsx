@@ -24,7 +24,7 @@ export default function App() {
 
         try {
             // ALWAYS TRY AI FIRST
-            const aiLayout = await generateAILayout("Create a fresh, professional, and high-performance wellness layout with varied component sizes.");
+            const aiLayout = await generateAILayout();
             setLayoutState({
                 ...aiLayout,
                 sessionId: crypto.randomUUID(),

@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const PRIMARY_MODEL = "gemini-2.0-flash";
-const FALLBACK_MODEL = "gemini-2.0-flash-lite";
+const PRIMARY_MODEL = "gemini-2.5-flash";
+const FALLBACK_MODEL = "gemini-1.5-flash";
 
 const AVAILABLE_COMPONENTS = [
   'DailyCheckin',
@@ -15,36 +15,37 @@ const AVAILABLE_COMPONENTS = [
 ];
 
 const SYSTEM_PROMPT = `
-You are a Senior Generative UI Architect. Your goal is to completely redesign a Wellness Dashboard layout to feel fresh and dynamic.
+You are a Senior Generative UI Architect. Your goal is a COMPLETE structural overhaul of the Wellness Dashboard.
 
-Available Components: ${AVAILABLE_COMPONENTS.join(', ')}
+AVAILABLE COMPONENTS (MANDATORY): 
+1. DailyCheckin (No internalLayout)
+2. ScoreCards (Internal keys: ScoreTeal, ScoreBlue, ScoreCoral)
+3. WearableInsights (Internal keys: Header, DeviceInfo, StepsTracker, VitalsRow, AITip)
+4. AssessmentCards (Internal keys: PHQ2, GAD2, DASS21)
+5. SuggestedForYou (No internalLayout)
+6. PersonalizedInsights (Internal keys: Header, Insight1, Insight2, Insight3)
+7. SupportBanner (No internalLayout)
 
-Redesign Strategy:
-1. Outer Layout (gridSpan): 1, 2, or 4. Shuffle the order of components completely.
-2. Internal Sizing (Inner Redesign):
-   - This is CRITICAL. For components like WearableInsights, ScoreCards, AssessmentCards, and PersonalizedInsights, you MUST redesign the internal elements.
-   - Use "span": 1 (small) or 2 (large/full-width) for internal elements.
-   - DO NOT make everything the same size. Mix them up (e.g., a large element followed by two small ones, or vice versa).
-   - Shuffle the "order" of elements inside each component to change the reading flow.
-3. Visibility: You can occasionally set "isVisible": false for 1-2 components to keep the dashboard focused.
+CRITICAL RULES:
+1. TOTAL INCLUSION: The "layout" array MUST contain exactly 7 objects. One for each component listed above.
+2. VALID KEYS: You MUST use the exact "elementKey" names listed above. Using wrong keys will cause blank UI.
+3. UNIQUE IDs: Every object in the "layout" array MUST have a unique "id".
+4. NO SIMPLIFICATION: Do NOT hide components.
+5. INTERNAL ARCHITECTURE: For ScoreCards, WearableInsights, AssessmentCards, and PersonalizedInsights, you MUST provide a detailed "internalLayout" array using the valid keys. Mix "span": 1 and "span": 2.
+6. VISIBILITY: All components and internal elements must have "isVisible": true.
 
-STRICT BRANDING: Do NOT change colors. Focus entirely on structural variety and element sizing.
-
-Output MUST be a valid JSON object:
+Output MUST be a valid JSON object following this exact skeleton:
 {
   "layout": [
-    {
-      "id": "unique_id",
-      "componentKey": "string",
-      "gridSpan": number,
-      "isVisible": boolean,
-      "order": number,
-      "internalLayout": [
-        { "elementKey": "string", "isVisible": boolean, "order": number, "span": number }
-      ]
-    }
+    { "id": "card-daily", "componentKey": "DailyCheckin", "gridSpan": 4, "isVisible": true, "order": 0, "internalLayout": null },
+    { "id": "card-scores", "componentKey": "ScoreCards", "gridSpan": 4, "isVisible": true, "order": 1, "internalLayout": [ { "elementKey": "ScoreTeal", "isVisible": true, "order": 0, "span": 1 }, ... ] },
+    { "id": "card-wearable", "componentKey": "WearableInsights", "gridSpan": 2, "isVisible": true, "order": 2, "internalLayout": [ { "elementKey": "Header", "isVisible": true, "order": 0, "span": 2 }, ... ] },
+    { "id": "card-assessments", "componentKey": "AssessmentCards", "gridSpan": 2, "isVisible": true, "order": 3, "internalLayout": [ { "elementKey": "PHQ2", "isVisible": true, "order": 0, "span": 2 }, ... ] },
+    { "id": "card-suggested", "componentKey": "SuggestedForYou", "gridSpan": 4, "isVisible": true, "order": 4, "internalLayout": null },
+    { "id": "card-insights", "componentKey": "PersonalizedInsights", "gridSpan": 4, "isVisible": true, "order": 5, "internalLayout": [ { "elementKey": "Insight1", "isVisible": true, "order": 0, "span": 2 }, ... ] },
+    { "id": "card-support", "componentKey": "SupportBanner", "gridSpan": 4, "isVisible": true, "order": 6, "internalLayout": null }
   ],
-  "aiReasoning": "Briefly explain the structural strategy used for this redesign."
+  "aiReasoning": "Full 7/7 component redesign with verified internal element keys."
 }
 `;
 
@@ -53,7 +54,7 @@ Output MUST be a valid JSON object:
  */
 function extractText(response) {
   if (typeof response.text === 'function') return response.text();
-  
+
   const candidate = response.candidates?.[0];
   const part = candidate?.content?.parts?.[0];
 
@@ -65,20 +66,30 @@ function extractText(response) {
  */
 function safeParseJSON(text) {
   try {
+    // 1. Try direct parse
     return JSON.parse(text);
   } catch (e) {
     console.warn("JSON parse failed, attempting cleanup...");
 
-    const cleaned = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    try {
-      return JSON.parse(cleaned);
-    } catch (err) {
-      throw new Error("AI returned invalid JSON");
+    // 2. Try to extract JSON between curly braces
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch (innerErr) {
+        // 3. Fallback: aggressive cleanup of common AI issues
+        const cleaned = jsonMatch[0]
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+        try {
+          return JSON.parse(cleaned);
+        } catch (finalErr) {
+          throw new Error("AI returned unparseable JSON structure");
+        }
+      }
     }
+    throw new Error("No JSON structure found in AI response");
   }
 }
 
@@ -88,10 +99,18 @@ async function callModel(genAI, modelName, prompt) {
   const response = await result.response;
   const text = extractText(response);
 
-  return safeParseJSON(text);
+  const parsed = safeParseJSON(text);
+
+  // VALIDATION: Ensure AI didn't skip any components
+  if (!parsed.layout || parsed.layout.length < 7) {
+    console.warn("AI returned incomplete layout, triggering fallback...");
+    throw new Error("Incomplete layout generated by AI");
+  }
+
+  return parsed;
 }
 
-export async function generateAILayout(userVibe = "Professional Wellness Dashboard") {
+export async function generateAILayout() {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -103,7 +122,7 @@ export async function generateAILayout(userVibe = "Professional Wellness Dashboa
 
   const prompt = `${SYSTEM_PROMPT}
 
-Context/Goal: "${userVibe}"
+ACTION: Perform a full-scale structural redesign now. Ensure all components are visible and shuffled.
 
 STRICT RULE:
 Return ONLY valid JSON. No markdown, no explanation.`;
