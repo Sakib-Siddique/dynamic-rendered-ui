@@ -1,0 +1,93 @@
+/* ============================================
+   Jaydii — Global Styles & Reset
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Brand Colors */
+  --teal-primary: #4DB6AC;
+  --teal-dark: #3A9E94;
+  --teal-light: #E0F2F1;
+  --teal-50: #F0FAF9;
+  --teal-gradient: linear-gradient(135deg, #4DB6AC 0%, #3A9E94 60%, #2E8B83 100%);
+
+  /* Accents */
+  --coral: #EF7A6E;
+  --orange: #F5A623;
+  --green-accent: #4CAF50;
+  --blue-accent: #5C9CE6;
+
+  /* Neutrals */
+  --bg-page: #F5F7FA;
+  --bg-white: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --text-primary: #2D3748;
+  --text-secondary: #718096;
+  --text-muted: #A0AEC0;
+  --border-light: #E2E8F0;
+  --border-lighter: #EDF2F7;
+
+  /* Sizing */
+  --sidebar-width: 180px;
+  --topbar-height: 60px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A0AEC0;
+}
