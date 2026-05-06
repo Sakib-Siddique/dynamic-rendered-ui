@@ -2,15 +2,6 @@ import React from 'react';
 
 const navItems = [
   { icon: '🏠', label: 'Home', active: true },
-  { icon: '💬', label: 'Chatbot' },
-  { icon: '📚', label: 'Courses' },
-  { icon: '📊', label: 'Analytics' },
-  { icon: '👨‍⚕️', label: 'Experts' },
-  { icon: '📅', label: 'My Booking' },
-  { icon: '📝', label: 'Session Summ...' },
-  { icon: '📄', label: 'My Reports' },
-  { icon: '⭐', label: 'My Review' },
-  { icon: '💳', label: 'Transaction Hi...' },
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
